@@ -2,31 +2,13 @@ command:
   - "/bin/bash"
   - "-c"
   - |
-    # Install dependencies (Databricks may have already done this)
+    # Install dependencies
     npm install
 
-    # Create database file with proper permissions
-    touch nexus.db
-    chmod 666 nexus.db
-
-    # Build both web and API applications using workspace commands
-    npm run build --workspace=api
+    # Build web application
     npm run build --workspace=web
 
-    # Start API in the background
-    npm run start --workspace=api -- -H 0.0.0.0 -p 3002 &
-    API_PID=$!
-
-    # Wait a moment for API to start
-    sleep 5
-
-    # Check if API is running
-    if ! kill -0 $API_PID 2>/dev/null; then
-      echo "ERROR: API failed to start"
-      exit 1
-    fi
-
-    # Start web app in the foreground on port 8080
+    # Start web app on port 8080
     npm run start --workspace=web -- -H 0.0.0.0 -p 8080
 
 env:

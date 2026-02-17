@@ -1,4 +1,4 @@
-import { TodoList } from "./components/TodoList";
+// import { TodoList } from "./components/TodoList";
 
 export default function Home() {
   return (
@@ -8,7 +8,7 @@ export default function Home() {
       margin: "0 auto"
     }}>
       <h1>Welcome to Nexus Web App</h1>
-      <p>This is a simple Next.js application running on port 3000.</p>
+      <p>This is a simple Next.js application deployed on Databricks Apps!</p>
       <div style={{
         marginTop: "2rem",
         padding: "1rem",
@@ -20,12 +20,25 @@ export default function Home() {
           <li>Framework: Next.js 14</li>
           <li>Language: TypeScript</li>
           <li>Database: SQLite ✓</li>
-          <li>Monorepo: Turborepo + PNPM</li>
+          <li>Monorepo: npm workspaces</li>
           <li>Runtime: Node.js</li>
+          <li>Platform: Databricks Apps ✓</li>
         </ul>
       </div>
 
-      <TodoList />
+      <div style={{
+        marginTop: "2rem",
+        padding: "1rem",
+        backgroundColor: "#e8f5e9",
+        borderRadius: "8px",
+        border: "2px solid #4caf50"
+      }}>
+        <h2>✓ Deployment Successful!</h2>
+        <p>Your application is running correctly on Databricks.</p>
+        <p><small>Timestamp: {new Date().toISOString()}</small></p>
+      </div>
+
+      {/* <TodoList /> */}
     </main>
   );
 }
