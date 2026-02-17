@@ -2,26 +2,23 @@ command:
   - "/bin/bash"
   - "-c"
   - |
-    # Install pnpm globally
-    npm install -g pnpm@9.0.0
-
-    # Install dependencies
-    pnpm install
+    # Install dependencies using npx pnpm (no global install needed)
+    npx -y pnpm@9.0.0 install
 
     # Create database file with proper permissions
     touch nexus.db
     chmod 666 nexus.db
 
-    # Build all applications using turbo
-    pnpm build
+    # Build all applications using turbo via pnpm
+    npx -y pnpm@9.0.0 exec turbo run build
 
     # Start API in the background on port 3002
-    cd apps/api && pnpm start -H 0.0.0.0 -p 3002 &
+    cd apps/api && npx -y pnpm@9.0.0 start -H 0.0.0.0 -p 3002 &
     API_PID=$!
     cd ../..
 
     # Start Admin in the background on port 3001
-    cd apps/admin && pnpm start -H 0.0.0.0 -p 3001 &
+    cd apps/admin && npx -y pnpm@9.0.0 start -H 0.0.0.0 -p 3001 &
     ADMIN_PID=$!
     cd ../..
 
@@ -29,7 +26,7 @@ command:
     sleep 5
 
     # Start web app in the foreground on port 8080
-    cd apps/web && pnpm start -H 0.0.0.0 -p 8080
+    cd apps/web && npx -y pnpm@9.0.0 start -H 0.0.0.0 -p 8080
 
 env:
   - name: NODE_ENV
