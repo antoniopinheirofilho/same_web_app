@@ -1,0 +1,21 @@
+command:
+  - "/bin/bash"
+  - "-c"
+  - |
+    # Install pnpm globally
+    npm install -g pnpm@9.0.0
+
+    # Install dependencies
+    pnpm install
+
+    # Build all applications
+    pnpm build
+
+    # Start all applications
+    pnpm dev
+
+env:
+  - name: NODE_ENV
+    value: "production"
+  - name: PORT
+    value: "8080"
