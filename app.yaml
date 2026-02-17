@@ -5,8 +5,18 @@ command:
     # Install dependencies (Databricks may have already done this)
     npm install
 
-    # Build and start the web application
-    cd apps/web && npm run build && npm run start -- -H 0.0.0.0 -p 8080
+    # Build both web and API applications
+    cd apps/api && npm run build && cd ../..
+    cd apps/web && npm run build && cd ../..
+
+    # Start API in the background
+    cd apps/api && npm run start -- -H 0.0.0.0 -p 3002 &
+
+    # Wait a moment for API to start
+    sleep 3
+
+    # Start web app in the foreground on port 8080
+    cd apps/web && npm run start -- -H 0.0.0.0 -p 8080
 
 env:
   - name: NODE_ENV
