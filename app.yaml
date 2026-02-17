@@ -9,43 +9,41 @@ command:
     touch nexus.db
     chmod 666 nexus.db
 
-    # Build apps and check results
-    echo "Building API..."
+    # Build all apps
     npm run build --workspace=api --if-present 2>&1 | grep -v "Failed to patch lockfile" | grep -v "ENOWORKSPACES" || true
-    echo "Building Admin..."
     npm run build --workspace=admin --if-present 2>&1 | grep -v "Failed to patch lockfile" | grep -v "ENOWORKSPACES" || true
-    echo "Building Web..."
     npm run build --workspace=web --if-present 2>&1 | grep -v "Failed to patch lockfile" | grep -v "ENOWORKSPACES" || true
 
-    # Debug: Check what was created
-    echo "Checking build outputs..."
-    ls -la apps/web/.next/ || echo "No .next directory"
-    ls -la apps/web/.next/standalone/ || echo "No standalone directory"
+    # Copy static assets to standalone (if they exist)
+    [ -d "apps/api/.next/standalone" ] && cp -r apps/api/.next/static apps/api/.next/standalone/.next/ 2>/dev/null || true
+    [ -d "apps/admin/.next/standalone" ] && cp -r apps/admin/.next/static apps/admin/.next/standalone/.next/ 2>/dev/null || true
+    [ -d "apps/web/.next/standalone" ] && cp -r apps/web/.next/static apps/web/.next/standalone/.next/ 2>/dev/null || true
 
-    # Check if standalone exists, if not use regular next start
-    if [ -d "apps/web/.next/standalone" ]; then
-      echo "Using standalone mode"
-      # Copy static files
-      cp -r apps/api/.next/static apps/api/.next/standalone/apps/api/.next/ 2>/dev/null || true
-      cp -r apps/admin/.next/static apps/admin/.next/standalone/apps/admin/.next/ 2>/dev/null || true
-      cp -r apps/web/.next/static apps/web/.next/standalone/apps/web/.next/ 2>/dev/null || true
-
-      # Start standalone servers
-      cd apps/api/.next/standalone && PORT=3002 HOSTNAME=0.0.0.0 node apps/api/server.js &
+    # Start API
+    if [ -f "apps/api/.next/standalone/server.js" ]; then
+      cd apps/api/.next/standalone && PORT=3002 HOSTNAME=0.0.0.0 node server.js &
       cd ../../..
-      cd apps/admin/.next/standalone && PORT=3001 HOSTNAME=0.0.0.0 node apps/admin/server.js &
-      cd ../../..
-      sleep 5
-      cd apps/web/.next/standalone && PORT=8080 HOSTNAME=0.0.0.0 node apps/web/server.js
     else
-      echo "Using next start mode"
-      # Start with next start
-      cd apps/api && npm start -- -H 0.0.0.0 -p 3002 &
-      cd ../..
-      cd apps/admin && npm start -- -H 0.0.0.0 -p 3001 &
-      cd ../..
-      sleep 5
-      cd apps/web && npm start -- -H 0.0.0.0 -p 8080
+      cd apps/api && PORT=3002 HOSTNAME=0.0.0.0 npm start -- -H 0.0.0.0 -p 3002 &
+      cd ..
+    fi
+
+    # Start Admin
+    if [ -f "apps/admin/.next/standalone/server.js" ]; then
+      cd apps/admin/.next/standalone && PORT=3001 HOSTNAME=0.0.0.0 node server.js &
+      cd ../../..
+    else
+      cd apps/admin && PORT=3001 HOSTNAME=0.0.0.0 npm start -- -H 0.0.0.0 -p 3001 &
+      cd ..
+    fi
+
+    sleep 5
+
+    # Start Web (foreground)
+    if [ -f "apps/web/.next/standalone/server.js" ]; then
+      cd apps/web/.next/standalone && PORT=8080 HOSTNAME=0.0.0.0 node server.js
+    else
+      cd apps/web && PORT=8080 HOSTNAME=0.0.0.0 npm start -- -H 0.0.0.0 -p 8080
     fi
 
 env:
