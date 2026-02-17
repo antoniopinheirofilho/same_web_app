@@ -5,14 +5,16 @@ command:
     # Install dependencies (Databricks may have already done this)
     npm install
 
-    # Build all applications using turbo directly
-    ./node_modules/.bin/turbo run build
+    # Build the web application
+    cd apps/web && npm run build
 
-    # Start all applications using turbo directly
-    ./node_modules/.bin/turbo run dev
+    # Start the web app in production mode on port 8080, bound to all interfaces
+    cd apps/web && npm run start -- -H 0.0.0.0 -p 8080
 
 env:
   - name: NODE_ENV
     value: "production"
   - name: PORT
     value: "8080"
+  - name: HOSTNAME
+    value: "0.0.0.0"
