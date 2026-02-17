@@ -21,13 +21,13 @@ export function TodoList() {
   const fetchTodos = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:3002/api/todos");
+      const response = await fetch("/api/todos");
       if (!response.ok) throw new Error("Failed to fetch todos");
       const data = await response.json();
       setTodos(data.todos);
       setError(null);
     } catch (err) {
-      setError("Failed to load todos. Make sure the API is running on port 3002.");
+      setError("Failed to load todos. Please try again.");
       console.error(err);
     } finally {
       setLoading(false);
@@ -39,7 +39,7 @@ export function TodoList() {
     if (!newTodo.trim()) return;
 
     try {
-      const response = await fetch("http://localhost:3002/api/todos", {
+      const response = await fetch("/api/todos", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title: newTodo }),
@@ -58,7 +58,7 @@ export function TodoList() {
 
   const deleteTodoHandler = async (id: number) => {
     try {
-      const response = await fetch(`http://localhost:3002/api/todos/${id}`, {
+      const response = await fetch(`/api/todos/${id}`, {
         method: "DELETE",
       });
 
@@ -74,7 +74,7 @@ export function TodoList() {
 
   const toggleTodoHandler = async (id: number, currentStatus: boolean) => {
     try {
-      const response = await fetch(`http://localhost:3002/api/todos/${id}`, {
+      const response = await fetch(`/api/todos/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ completed: !currentStatus }),

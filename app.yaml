@@ -28,3 +28,5 @@ env:
     value: "production"
   - name: NEXT_TELEMETRY_DISABLED
     value: "1"
+  - name: API_URL
+    value: "http://localhost:3002"
