@@ -5,10 +5,25 @@ command:
     # Install dependencies
     npm install
 
-    # Build web application
+    # Create database file with proper permissions
+    touch nexus.db
+    chmod 666 nexus.db
+
+    # Build all applications
+    npm run build --workspace=api
+    npm run build --workspace=admin
     npm run build --workspace=web
 
-    # Start web app on port 8080
+    # Start API in the background on port 3002
+    npm run start --workspace=api -- -H 0.0.0.0 -p 3002 &
+
+    # Start Admin in the background on port 3001
+    npm run start --workspace=admin -- -H 0.0.0.0 -p 3001 &
+
+    # Wait for background services to start
+    sleep 5
+
+    # Start web app in the foreground on port 8080
     npm run start --workspace=web -- -H 0.0.0.0 -p 8080
 
 env:
