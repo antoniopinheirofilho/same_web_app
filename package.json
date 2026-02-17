@@ -7,17 +7,19 @@
     "packages/*"
   ],
   "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "clean": "turbo run clean",
     "db:init": "tsx scripts/db-init.ts",
     "db:reset": "tsx scripts/db-init.ts --reset",
     "db:check": "tsx scripts/db-init.ts --check"
   },
-  "dependencies": {
-    "turbo": "^2.0.0"
-  },
   "devDependencies": {
+    "turbo": "^2.0.0",
     "tsx": "^4.7.0"
   },
-  "packageManager": "npm@10.9.2",
+  "packageManager": "pnpm@9.0.0",
   "engines": {
     "node": ">=18.0.0"
   }
