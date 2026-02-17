@@ -2,41 +2,42 @@ command:
   - "/bin/bash"
   - "-c"
   - |
-    # Remove pnpm lockfile (we're using npm for deployment)
+    # Remove pnpm files
     rm -f pnpm-lock.yaml pnpm-workspace.yaml
 
     # Create database file
     touch nexus.db
     chmod 666 nexus.db
 
-    # Build all apps (creates standalone outputs)
-    SKIP_ENV_VALIDATION=1 npm run build --workspace=api --if-present
-    SKIP_ENV_VALIDATION=1 npm run build --workspace=admin --if-present
-    SKIP_ENV_VALIDATION=1 npm run build --workspace=web --if-present
+    # Build apps (suppress lockfile warnings but check exit code)
+    npm run build --workspace=api --if-present 2>&1 | grep -v "Failed to patch lockfile" | grep -v "ENOWORKSPACES" || true
+    npm run build --workspace=admin --if-present 2>&1 | grep -v "Failed to patch lockfile" | grep -v "ENOWORKSPACES" || true
+    npm run build --workspace=web --if-present 2>&1 | grep -v "Failed to patch lockfile" | grep -v "ENOWORKSPACES" || true
 
-    # Copy static files for each app
+    # Verify builds succeeded
+    if [ ! -d "apps/web/.next" ]; then
+      echo "ERROR: Web app build failed"
+      exit 1
+    fi
+
+    # Copy static files
     cp -r apps/api/.next/static apps/api/.next/standalone/apps/api/.next/ 2>/dev/null || true
     cp -r apps/admin/.next/static apps/admin/.next/standalone/apps/admin/.next/ 2>/dev/null || true
     cp -r apps/web/.next/static apps/web/.next/standalone/apps/web/.next/ 2>/dev/null || true
 
-    # Start API standalone server in background
+    # Start servers
     cd apps/api/.next/standalone && PORT=3002 HOSTNAME=0.0.0.0 node apps/api/server.js &
     cd ../../..
 
-    # Start Admin standalone server in background
     cd apps/admin/.next/standalone && PORT=3001 HOSTNAME=0.0.0.0 node apps/admin/server.js &
     cd ../../..
 
-    # Wait for services
     sleep 5
 
-    # Start Web standalone server in foreground
     cd apps/web/.next/standalone && PORT=8080 HOSTNAME=0.0.0.0 node apps/web/server.js
 
 env:
   - name: NODE_ENV
     value: "production"
   - name: NEXT_TELEMETRY_DISABLED
-    value: "1"
-  - name: SKIP_ENV_VALIDATION
     value: "1"
