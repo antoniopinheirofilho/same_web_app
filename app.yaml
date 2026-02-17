@@ -6,27 +6,32 @@ command:
     touch nexus.db
     chmod 666 nexus.db
 
-    # Build all apps from root using workspace commands
+    # Build all apps (creates standalone outputs)
     npm run build --workspace=api --if-present
     npm run build --workspace=admin --if-present
     npm run build --workspace=web --if-present
 
-    # Start API in background
-    npm run start --workspace=api -- -H 0.0.0.0 -p 3002 &
+    # Copy static files for each app
+    cp -r apps/api/.next/static apps/api/.next/standalone/apps/api/.next/ 2>/dev/null || true
+    cp -r apps/admin/.next/static apps/admin/.next/standalone/apps/admin/.next/ 2>/dev/null || true
+    cp -r apps/web/.next/static apps/web/.next/standalone/apps/web/.next/ 2>/dev/null || true
 
-    # Start Admin in background
-    npm run start --workspace=admin -- -H 0.0.0.0 -p 3001 &
+    # Start API standalone server in background
+    cd apps/api/.next/standalone && PORT=3002 HOSTNAME=0.0.0.0 node apps/api/server.js &
+    cd ../../..
+
+    # Start Admin standalone server in background
+    cd apps/admin/.next/standalone && PORT=3001 HOSTNAME=0.0.0.0 node apps/admin/server.js &
+    cd ../../..
 
     # Wait for services
     sleep 5
 
-    # Start web app in foreground
-    npm run start --workspace=web -- -H 0.0.0.0 -p 8080
+    # Start Web standalone server in foreground
+    cd apps/web/.next/standalone && PORT=8080 HOSTNAME=0.0.0.0 node apps/web/server.js
 
 env:
   - name: NODE_ENV
     value: "production"
-  - name: PORT
-    value: "8080"
-  - name: HOSTNAME
-    value: "0.0.0.0"
+  - name: NEXT_TELEMETRY_DISABLED
+    value: "1"
