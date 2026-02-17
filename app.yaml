@@ -2,17 +2,14 @@ command:
   - "/bin/bash"
   - "-c"
   - |
-    # Install pnpm globally
-    npm install -g pnpm@9.0.0
-
-    # Install dependencies
-    pnpm install
+    # Install dependencies (Databricks may have already done this)
+    npm install
 
     # Build all applications
-    pnpm build
+    npm run build
 
     # Start all applications
-    pnpm dev
+    npm run dev
 
 env:
   - name: NODE_ENV

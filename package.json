@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "pnpm exec turbo run dev",
-    "build": "pnpm exec turbo run build",
-    "lint": "pnpm exec turbo run lint",
-    "clean": "pnpm exec turbo run clean",
+    "dev": "npx turbo run dev",
+    "build": "npx turbo run build",
+    "lint": "npx turbo run lint",
+    "clean": "npx turbo run clean",
+    "start": "npx turbo run dev",
     "db:init": "tsx scripts/db-init.ts",
     "db:reset": "tsx scripts/db-init.ts --reset",
     "db:check": "tsx scripts/db-init.ts --check"
