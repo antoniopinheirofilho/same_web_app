@@ -2,6 +2,10 @@
   "name": "nexus-monorepo",
   "version": "1.0.0",
   "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
     "db:init": "tsx scripts/db-init.ts",
     "db:reset": "tsx scripts/db-init.ts --reset",
