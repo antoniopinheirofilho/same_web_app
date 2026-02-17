@@ -6,24 +6,22 @@ command:
     touch nexus.db
     chmod 666 nexus.db
 
-    # Build apps individually
-    cd apps/api && npm run build && cd ../..
-    cd apps/admin && npm run build && cd ../..
-    cd apps/web && npm run build && cd ../..
+    # Build all apps from root using workspace commands
+    npm run build --workspace=api --if-present
+    npm run build --workspace=admin --if-present
+    npm run build --workspace=web --if-present
 
     # Start API in background
-    cd apps/api && npm run start -- -H 0.0.0.0 -p 3002 &
-    cd ../..
+    npm run start --workspace=api -- -H 0.0.0.0 -p 3002 &
 
     # Start Admin in background
-    cd apps/admin && npm run start -- -H 0.0.0.0 -p 3001 &
-    cd ../..
+    npm run start --workspace=admin -- -H 0.0.0.0 -p 3001 &
 
     # Wait for services
     sleep 5
 
-    # Start web app
-    cd apps/web && npm run start -- -H 0.0.0.0 -p 8080
+    # Start web app in foreground
+    npm run start --workspace=web -- -H 0.0.0.0 -p 8080
 
 env:
   - name: NODE_ENV
