@@ -5,11 +5,17 @@ command:
     # Install dependencies
     npm install
 
-    # Build web application
+    # Build web application (creates standalone output)
     npm run build --workspace=web
 
-    # Start web app on port 8080
-    npm run start --workspace=web -- -H 0.0.0.0 -p 8080
+    # Copy static files and public assets to standalone directory
+    cp -r apps/web/.next/static apps/web/.next/standalone/apps/web/.next/static
+    if [ -d "apps/web/public" ]; then
+      cp -r apps/web/public apps/web/.next/standalone/apps/web/public
+    fi
+
+    # Start standalone server
+    cd apps/web/.next/standalone && node apps/web/server.js
 
 env:
   - name: NODE_ENV
