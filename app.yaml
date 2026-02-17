@@ -5,11 +5,11 @@ command:
     # Install dependencies (Databricks may have already done this)
     npm install
 
-    # Build all applications
-    npm run build
+    # Build all applications using turbo directly
+    ./node_modules/.bin/turbo run build
 
-    # Start all applications
-    npm run dev
+    # Start all applications using turbo directly
+    ./node_modules/.bin/turbo run dev
 
 env:
   - name: NODE_ENV

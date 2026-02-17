@@ -3,11 +3,6 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "turbo run dev",
-    "build": "turbo run build",
-    "lint": "turbo run lint",
-    "clean": "turbo run clean",
-    "start": "turbo run dev",
     "db:init": "tsx scripts/db-init.ts",
     "db:reset": "tsx scripts/db-init.ts --reset",
     "db:check": "tsx scripts/db-init.ts --check"
